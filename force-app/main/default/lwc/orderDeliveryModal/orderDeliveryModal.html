@@ -1,19 +1,19 @@
 <template>
     <!-- Bouton pour ouvrir la modal -->
-     <lightning-card>
+    <lightning-card if:true={hasPermission}> 
         <h1 slot="title">
-            <lightning-icon icon-name="standard:orders" size="small"></lightning-icon>
-            <span class="slds-m-left_x-small">Commandes</span>
+            <lightning-icon icon-name="utility:truck" size="small"></lightning-icon>
+            <span class="slds-m-left_x-small">Sélectionner un Transporteur Pour envoyer cette commande</span>
         </h1>
-        <lightning-button 
-            class="slds-text-align_right"
-            label="Choisir un transporteur" 
-            variant="brand" 
-            onclick={openModal}>
-        </lightning-button>
+        <div class="slds-m-left_large">
+            <lightning-button 
+                label="Choisir un transporteur" 
+                variant="brand" 
+                onclick={openModal}>
+            </lightning-button>
+        </div>
     </lightning-card>
    
-
     <!-- MODAL -->
     <template if:true={isModalOpen}>
         <section role="dialog" class="slds-modal slds-fade-in-open">

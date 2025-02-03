@@ -1,5 +1,6 @@
 import { LightningElement, api,wire } from 'lwc';
 import getOrderById from '@salesforce/apex/OrderService.getOrderById';
+import permission from '@salesforce/apex/PermissionController.UserhasPermissiontoSendOrder';
 
 export default class OrderDeliveryModal extends LightningElement {
     @api recordId;
@@ -10,10 +11,21 @@ export default class OrderDeliveryModal extends LightningElement {
     @api accountId;
 
     isModalOpen = false;
+    hasPermission=false;
 
     connectedCallback(event) {
         console.log('record id ' + this.recordId);
     }
+
+    //Verifier si l'utilisateur a les permissions d'envoi d'une commande
+     @wire(permission)
+     wiredPermission({ error, data }) {
+        if (data) {            
+            this.hasPermission = data;
+        }else{
+            console.log('erreur '+ error)
+        }
+     }
 
     // Récupération  de la commande en cours
     @wire(getOrderById, { orderId: '$recordId' })
