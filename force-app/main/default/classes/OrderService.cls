@@ -1,10 +1,36 @@
 public with sharing class OrderService {
-
-    // Méthode pour valider les commandes
-    public static void validateOrder(Order orderToValidate) {
-        // TODO: Implémenter la logique de validation de la commande
+    
+    @AuraEnabled(cacheable=true)
+    public static Order getOrderById(Id orderId){
+        if (orderId == null) {
+            throw new AuraHandledException('Erreur : OrderId est null.');
+        }
+        return [
+            SELECT Id,
+                OrderNumber,
+                AccountId,
+                ShippingCountry
+            FROM Order
+            WHERE Id = :orderId
+            LIMIT 1
+        ];
+       
     }
 
-    //TODO : Completer la classe avec toute autre méthode nécessaire pour gérer la logique métier liée aux commandes
+    @AuraEnabled(cacheable=true)
+    public static Boolean validateOrder(Order orderToValidate) {
+        if (orderToValidate.AccountId == null) {
+            throw new AuraHandledException('An order must be associated with an account.');
+        }
+        Account acc = AccountSelector.getAccountById(orderToValidate.AccountId);
+        List<OrderItem> items = [SELECT Id FROM OrderItem WHERE OrderId = :orderToValidate.Id];   
+
+        if ((acc.Customer_Type__c.contains('Particulier') && items.size() >= 3) ||
+            (acc.Customer_Type__c.contains('Professionnel') && items.size() >= 5)) {
+            return true;
+        }
+        
+        return false;
+    }
 
 }
