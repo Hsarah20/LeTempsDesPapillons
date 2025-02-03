@@ -1,0 +1,41 @@
+<template>
+    <lightning-card title="Lancement de Livraison" icon-name="utility:truck">
+        <div class="slds-p-around_medium">
+            
+            <!-- Affichage des informations de la commande -->
+            <p><strong>Commande :</strong> {orderNumber}</p>
+            <p><strong>Pays de livraison :</strong> {deliveryCountry}</p>
+            <p><strong>Type de client :</strong> {customerType}</p>
+
+            <!-- Sélecteur de transporteur -->
+            <lightning-combobox
+                name="carrier"
+                label="Sélectionnez un transporteur"
+                value={selectedCarrier}
+                placeholder="Choisissez un transporteur"
+                options={carrierOptions}
+                onchange={handleCarrierChange}>
+            </lightning-combobox>
+
+            <!-- Affichage des détails du transporteur sélectionné -->
+            <template if:true={selectedCarrierDetails}>
+                <div class="slds-m-top_medium slds-box slds-theme_shade">
+                    <p><strong>Transporteur :</strong> {selectedCarrierDetails.Account__r.Name}</p>
+                    <p><strong>Prix :</strong> {selectedCarrierDetails.Price__c} €</p>
+                    <p><strong>Délais de livraison :</strong> {selectedCarrierDetails.Delivery_Time__c} jours</p>
+                </div>
+            </template>
+
+            <!-- Bouton de validation -->
+            <div class="slds-m-top_medium">
+                <lightning-button
+                    variant="brand"
+                    label="Confirmer la Livraison"
+                    onclick={handleConfirmDelivery}
+                    disabled={isConfirmDisabled}>
+                </lightning-button>
+            </div>
+
+        </div>
+    </lightning-card>
+</template>
