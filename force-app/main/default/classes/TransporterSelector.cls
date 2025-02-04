@@ -26,9 +26,18 @@ public with sharing class TransporterSelector {
         if (carrierPrices.isEmpty()) {
             return null;
         }
-        
-       // return carrierPrices.get(0).Account__r;
         return carrierPrices;
+    }
+    
+    @AuraEnabled(cacheable=true)
+    public static Delivery__c createDelivery(Carrier_Price__c carrierPrice,String orderId){
+        Delivery__c del = new Delivery__c();
+        del.Delivery_Date__c = Date.today().addDays(Integer.valueOf(carrierPrice.Delivery_Time__c));
+        del.Status__c = 'En cours';
+        del.Carrier_Price__r.id = carrierPrice.Id;
+        del.Order__r.Id = orderId; 
+
+        reurn del;
     }
 }
     
