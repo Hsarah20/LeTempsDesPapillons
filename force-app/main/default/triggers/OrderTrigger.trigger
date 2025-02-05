@@ -16,7 +16,7 @@ trigger OrderTrigger on Order (before update) {
 
             if ( bestCarrierPrice != null) {
                 //on crée une livraison avec ce transporteur
-                Delivery__c del = createDelivery(bestCarrierPrice, ord.Id);
+                Delivery__c del = TransporterSelector.createDelivery(bestCarrierPrice, ord.Id);
                 listDeliveries.add(del);
             }
         }
