@@ -2,6 +2,8 @@ import { LightningElement, api, wire } from 'lwc';
 import getBestCarriersByCriteria from '@salesforce/apex/TransporterSelector.getBestCarrierByCriteria';
 import getAccountById from '@salesforce/apex/AccountSelector.getAccountById';
 
+
+
 export default class OrderDeliverySelector extends LightningElement {
     @api orderId; 
     @api deliveryCountry; 
@@ -15,15 +17,15 @@ export default class OrderDeliverySelector extends LightningElement {
     selectedCarrierDetails = null;
 
     connectedCallback(event) {
-        console.log(' selector account id '+this.accountId);
+       // console.log('selector account id '+this.accountId);
     }
 
     // Récupération  de la commande en cours
     @wire(getAccountById, { accountId: '$accountId' })
     wiredAccout({ error, data }) {
         if (data) {
-            console.log('account data '+JSON.stringify(data))
-            console.log('Customer Type '+ data.Customer_Type__c)
+            //console.log('account data '+JSON.stringify(data))
+           // console.log('Customer Type '+ data.Customer_Type__c)
             this.customerType = data.Customer_Type__c;
                 
         } else if (error) {
@@ -64,12 +66,15 @@ export default class OrderDeliverySelector extends LightningElement {
                 detail: {
                     orderId: this.orderId,
                     carrierId: this.selectedCarrier,
-                    carrierName: this.selectedCarrierDetails.Name
+                    carrierName: this.selectedCarrierDetails.Account__r.Name
                 }
             });
             this.dispatchEvent(selectedCarrierEvent);
-            //Ajouter un switAlert
-            alert(`Livraison confirmée avec ${this.selectedCarrierDetails.Name}`);
-        }
+           
+        } 
     }
+
+    
 }
+
+

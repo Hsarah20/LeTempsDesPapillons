@@ -1,6 +1,7 @@
 import { LightningElement, api,wire } from 'lwc';
 import getOrderById from '@salesforce/apex/OrderService.getOrderById';
 import permission from '@salesforce/apex/PermissionController.UserhasPermissiontoSendOrder';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class OrderDeliveryModal extends LightningElement {
     @api recordId;
@@ -53,7 +54,17 @@ export default class OrderDeliveryModal extends LightningElement {
 
     // Gère la confirmation du transporteur
     handleDeliveryConfirmed(event) {
-        alert(`Livraison confirmée avec ${event.detail.carrierName}`);
+        this.showToast('Livraison',`Livraison confirmée avec ${event.detail.carrierName}`,'success');
         this.closeModal();
+    }
+
+    //toast alert
+    showToast(title, message, variant) {
+        const evt = new ShowToastEvent({
+            title: title,
+            message: message,
+            variant: variant
+        });
+        dispatchEvent(evt);
     }
 }
