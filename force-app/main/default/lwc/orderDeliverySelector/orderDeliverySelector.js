@@ -1,7 +1,8 @@
 import { LightningElement, api, wire } from 'lwc';
 import getBestCarriersByCriteria from '@salesforce/apex/TransporterSelector.getBestCarrierByCriteria';
 import getAccountById from '@salesforce/apex/AccountSelector.getAccountById';
-
+import createDelivery from '@salesforce/apex/TransporterSelector.createDelivery';
+import { RefreshEvent } from 'lightning/refresh';
 
 
 export default class OrderDeliverySelector extends LightningElement {
@@ -70,8 +71,16 @@ export default class OrderDeliverySelector extends LightningElement {
                 }
             });
             this.dispatchEvent(selectedCarrierEvent);
+            this.CreateDeliveryFromSelectedCarrier(this.orderId, this.selectedCarrierDetails.Id);
+            //this.dispatchEvent(new RefreshEvent());
            
         } 
+    }
+    //Créer une Livraison du transporteur sélectionné
+    CreateDeliveryFromSelectedCarrier(orderId, carrierId) {
+        // console.log('Order id '+ orderId );
+        // console.log('Carrier price id '+ carrierId );
+       createDelivery({ carrierPriceId: carrierId, orderId: orderId });
     }
 
     

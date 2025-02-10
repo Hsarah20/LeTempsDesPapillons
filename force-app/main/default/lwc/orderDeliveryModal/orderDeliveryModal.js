@@ -3,6 +3,7 @@ import getOrderById from '@salesforce/apex/OrderService.getOrderById';
 import permission from '@salesforce/apex/PermissionController.UserhasPermissiontoSendOrder';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
+
 export default class OrderDeliveryModal extends LightningElement {
     @api recordId;
     @api orderId;
@@ -10,19 +11,20 @@ export default class OrderDeliveryModal extends LightningElement {
     @api deliveryCountry;
     @api customerType;
     @api accountId;
+    @api orderStatus;
 
     isModalOpen = false;
-    hasPermission=false;
+    userPermission = false;
 
     connectedCallback(event) {
-        console.log('record id ' + this.recordId);
+        console.log('record id ' + this.recordId);    
     }
 
     //Verifier si l'utilisateur a les permissions d'envoi d'une commande
      @wire(permission)
      wiredPermission({ error, data }) {
         if (data) {            
-            this.hasPermission = data;
+            this.userPermission = data;
         }else{
             console.log('erreur '+ error)
         }
@@ -36,10 +38,15 @@ export default class OrderDeliveryModal extends LightningElement {
               this.orderNumber = this.currentOrder.OrderNumber;
               this.deliveryCountry=this.currentOrder.ShippingCountry
               this.accountId=this.currentOrder.AccountId;
+              this.orderStatus=this.currentOrder.Status;
                   
           } else if (error) {
               console.error('Erreur lors de la récupération de la commande', error);
           }
+    }
+
+    get hasPermission() {       
+         return (this.userPermission && this.orderStatus =='Validated');
     }
 
     // Ouvre la modal

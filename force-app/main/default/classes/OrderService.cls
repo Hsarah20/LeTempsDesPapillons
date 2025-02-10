@@ -9,7 +9,8 @@ public with sharing class OrderService {
             SELECT Id,
                 OrderNumber,
                 AccountId,
-                ShippingCountry
+                ShippingCountry,
+                Status
             FROM Order
             WHERE Id = :orderId
             LIMIT 1

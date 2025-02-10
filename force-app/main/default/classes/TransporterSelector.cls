@@ -6,17 +6,12 @@ public with sharing class TransporterSelector {
             throw new IllegalArgumentException('Country parameter cannot be empty.');
         }
 
-        //Récupérer l'ID du Record Type "Carrier" de l'object Account
-        RecordType carrierRecordType = [
-            SELECT Id FROM RecordType WHERE SObjectType = 'Account' AND Name = 'Carrier' LIMIT 1
-        ];
-       
         //Récupérer les transporteurs pour le pays et le type de client qui correspond
         List<Carrier_Price__c> carrierPrices = [
                             SELECT Id, Account__r.Id, Account__r.Name, Account__r.RecordType.Name, 
                                 Account__r.Customer_Type__c, Country__c, Price__c, Delivery_Time__c
                             FROM Carrier_Price__c
-                            WHERE Account__r.RecordType.Id = :carrierRecordType.Id 
+                            WHERE Account__r.RecordType.Name = 'Carrier' 
                             AND Country__c = :country 
                             AND Account__r.Customer_Type__c INCLUDES (:customerType)
                             ORDER BY Price__c ASC, Delivery_Time__c ASC
@@ -28,16 +23,24 @@ public with sharing class TransporterSelector {
         }
         return carrierPrices;
     }
-    
+
+    private static Carrier_Price__c getCarrierPriceById(ID carrierPriceId) {
+        if (carrierPriceId == null) {
+            throw new IllegalArgumentException('Id parameter cannot be null.');
+        }   
+        return [SELECT Id,Price__c,Delivery_Time__c FROM Carrier_Price__c WHERE Id = :carrierPriceId];
+    }
+
     @AuraEnabled(cacheable=true)
-    public static Delivery__c createDelivery(Carrier_Price__c carrierPrice,String orderId){
+    public static void createDelivery(String carrierPriceId,String orderId){
+        Carrier_Price__c carrierPrice  = getCarrierPriceById(carrierPriceId);
+        Order order= OrderService.getOrderById(orderId);
         Delivery__c delivery = new Delivery__c();
         delivery.Delivery_Date__c = Date.today().addDays(Integer.valueOf(carrierPrice.Delivery_Time__c));
         delivery.Status__c = 'En cours';
-        delivery.Carrier_Price__r.id = carrierPrice.Id;
-        delivery.Order__r.Id = orderId; 
-
-        return delivery;
+        delivery.Carrier_Price__r = carrierPrice;
+        delivery.Order__r = order; 
+        insert delivery;
     }
 }
     
