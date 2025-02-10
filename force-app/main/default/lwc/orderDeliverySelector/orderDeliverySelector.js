@@ -72,7 +72,7 @@ export default class OrderDeliverySelector extends LightningElement {
             });
             this.dispatchEvent(selectedCarrierEvent);
             this.CreateDeliveryFromSelectedCarrier(this.orderId, this.selectedCarrierDetails.Id);
-            //this.dispatchEvent(new RefreshEvent());
+            this.dispatchEvent(new RefreshEvent());
            
         } 
     }
@@ -81,6 +81,7 @@ export default class OrderDeliverySelector extends LightningElement {
         // console.log('Order id '+ orderId );
         // console.log('Carrier price id '+ carrierId );
        createDelivery({ carrierPriceId: carrierId, orderId: orderId });
+       console.log("livraison terminée");
     }
 
     
